@@ -1,0 +1,4 @@
+自動受講ツール.exeと同じフォルダに以下３点の画像を入れてから起動してください
+touan.png
+to_test.png
+click.png
