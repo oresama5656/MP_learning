@@ -1,0 +1,517 @@
+<html lang="ja"><head><meta http-equiv="pragma" content="no-cache"><meta http-equiv="cache-control" content="no-cache"><meta http-equiv="expires" content="0"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="Content-Style-Type" content="text/css"><meta name="Description" content="いつでもどこでもスキルアップ。調剤現場に役立つ多彩なコンテンツを効果的に学習できるMPラーニング。研修認定薬剤師対応。"><meta name="Keywords" content="MPラーニング,研修認定薬剤師,認定,薬剤,シール,登録販売者,医薬品,一般用医薬品,資格,試験,コンテンツ,対策,改正薬事法,薬事法,e-Learning,第２類,第３類,研修手帳"><link rel="shortcut icon"><link rel="icon" type="image/gif"><link href="../css/font-awesome.css" rel="stylesheet" type="text/css"><link href="../css/studyV3-common-20250212.css" rel="stylesheet" type="text/css"><link href="../css/font-awesome-animation.css" rel="stylesheet" type="text/css">
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-K4HMFQ8E3K"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag() { dataLayer.push(arguments); }
+	gtag('js', new Date());
+
+	gtag('config', 'G-K4HMFQ8E3K');
+</script>
+	
+	<script type="text/javascript" src="../script/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="../script/jquery-ui.js"></script>
+
+	<script type="text/javascript">
+		var confirmMessageStudy = "※途中まで見ていた時間を保持する場合は、「途中終了」を必ずクリックしてください。しない場合は、最初からの再生となります。";
+		var confirmMessageExam = "答案提出をしていない方は、進捗を保存せずに終了します。";
+		var touchEvent = 'click';
+
+		$(function () {
+			//console.log('StudyMasterV3初期化');
+
+			$('#tabs-1').tabs();
+			//$('#tabs-2').tabs();
+			//$('#tabs-3').tabs();
+
+			$('#tabs-4').tabs();
+
+			$('#next-study-mask-area').hide();
+
+		});
+
+		$(document).ready(function () {
+
+			setMainTabRadioButtonChecked();
+
+			/*if (StudyMasterData.ExistsInformation == "False") {
+				$('#panel-information-item').hide();
+				$('#panel-information-label').hide();
+				$('#panels-b3').hide();
+			}*/
+
+			var confirmMessage = "";
+
+			if (StudyMasterData.StudyPageKindText == "0") {
+				confirmMessage = confirmMessageStudy;
+			} else {
+				confirmMessage = confirmMessageExam;
+			}
+
+			$('#panel-study-item').on(touchEvent, function () {
+
+				if (StudyMasterData.StudyPageKindText == "0") return;
+
+				// レッスン画面を開く
+				// 画面リサイズ可能にしたとき、動画プレイヤーの拡大ボタンクリックでもwindowのリサイズイベントが実行されてしまうため、動画のサイズを固定に変更
+				// 画面リサイズ可能のレッスン画面を開く際は、下記切り替える
+				//var urlText = "LessonStudyResizable.aspx?L=" + StudyMasterData.LessonCode;
+				var urlText = "LessonStudyFixed.aspx?L=" + StudyMasterData.LessonCode;
+
+				if (StudyMasterData.StudyPageKindText == "3" || StudyMasterData.StudyPageKindText == "4" || StudyMasterData.StudyPageKindText == "5") {
+					urlText = urlText + "&FromExam=1"
+				}
+				
+				location.href = urlText;
+			});
+
+			/*$('#panel-schedule-item').on(touchEvent, function () {
+
+			if (!confirm(confirmMessage)) {
+			setMainTabRadioButtonChecked();
+			return false;
+			}
+
+			location.href = "LessonSchedule.aspx?L=" + StudyMasterData.LessonCode + "#tabs-2";
+			});*/
+
+			/*$('#panel-information-item').on(touchEvent, function () {
+
+				if (StudyMasterData.StudyPageKindText == "0" && !confirm(confirmMessage)) {
+					setMainTabRadioButtonChecked();
+					return false;
+				}
+
+				location.href = "LessonInformation.aspx?L=" + StudyMasterData.LessonCode + "#tabs-3";
+			});*/
+
+			$('#panel-exam-item').on(touchEvent, function () {
+
+				if (StudyMasterData.StudyPageKindText == "0" && !confirm(confirmMessage)) {
+					setMainTabRadioButtonChecked();
+					return false;
+				}
+
+				location.href = "Exam.aspx?L=" + StudyMasterData.LessonCode + "&D=" + StudyMasterData.ExamProgramNo;
+			});
+
+			$('#panel-end-item').on(touchEvent, function () {
+
+				if ((StudyMasterData.StudyPageKindText == "0" || StudyMasterData.StudyPageKindText == "3") && !confirm(confirmMessage)) {
+					setMainTabRadioButtonChecked();
+					return false;
+				}
+
+				window.close();
+			});
+
+		});
+
+		function setMainTabRadioButtonChecked() {
+
+			if (StudyMasterData.StudyPageKindText == "0" || StudyMasterData.StudyPageKindText == "1" || StudyMasterData.StudyPageKindText == "2") {
+
+				// 動画　タブ
+				$('#panels-b1').removeClass('panels-non-checked');
+				$('#panels-b1').addClass('panels-checked');
+				$('#panel-study-item').attr('checked', true);
+				$('#panel-study-label').removeClass('panels-label-normal');
+				$('#panel-study-label').addClass('panels-label-checked');
+
+				// 確認テスト　タブ
+				//$('#panel-exam-item').hide();
+				//$('#panel-exam-label').hide();
+				//$('#panels-b4').hide();
+				$('#panels-b4').removeClass('panels-checked-fixed');
+				$('#panels-b4').addClass('panels-checked');
+				$('#panel-exam-item').attr('checked', false);
+				$('#panel-exam-label').removeClass('panels-label-checked');
+				$('#panel-exam-label').addClass('panels-label-normal');
+
+			} else {
+
+				// 動画　タブ
+				$('#panels-b1').removeClass('panels-checked');
+				$('#panels-b1').addClass('panels-non-checked');
+				$('#panel-study-item').attr('checked', false);
+				$('#panel-study-label').removeClass('panels-label-checked');
+				$('#panel-study-label').addClass('panels-label-normal');
+
+				// 確認テスト　タブ
+				$('#panels-b4').removeClass('panels-non-checked');
+				$('#panels-b4').addClass('panels-checked-fixed');
+				$('#panel-exam-item').attr('checked', true);
+				$('#panel-exam-label').removeClass('panels-label-normal');
+				$('#panel-exam-label').addClass('panels-label-checked');
+
+			}
+
+			/*if (StudyMasterData.StudyPageKindText == "2") {
+
+			$('#panels-b2').removeClass('panels-non-checked');
+			$('#panels-b2').addClass('panels-checked');
+			$('#panel-schedule-item').attr('checked', true);
+			$('#panel-schedule-label').removeClass('panels-label-normal');
+			$('#panel-schedule-label').addClass('panels-label-checked');
+			} else {
+
+			$('#panels-b2').removeClass('panels-checked');
+			$('#panels-b2').addClass('panels-non-checked');
+			$('#panel-schedule-item').attr('checked', false);
+			$('#panel-schedule-label').removeClass('panels-label-checked');
+			$('#panel-schedule-label').addClass('panels-label-normal');
+			}*/
+
+			/*if (StudyMasterData.StudyPageKindText == "1") {
+
+				$('#panels-b3').removeClass('panels-non-checked');
+				$('#panels-b3').addClass('panels-checked');
+				$('#panel-information-item').attr('checked', true);
+				$('#panel-information-label').removeClass('panels-label-normal');
+				$('#panel-information-label').addClass('panels-label-checked');
+			} else {
+
+				$('#panels-b3').removeClass('panels-checked');
+				$('#panels-b3').addClass('panels-non-checked');
+				$('#panel-information-item').attr('checked', false);
+				$('#panel-information-label').removeClass('panels-label-checked');
+				$('#panel-information-label').addClass('panels-label-normal');
+			}*/
+
+		}
+	</script>
+
+	<title>
+	MPラーニング　確認テスト
+</title><link href="../css/studyV3-fixed-20221116.css" rel="stylesheet" type="text/css"></head>
+<body>
+	<form name="aspnetForm" method="post" action="Exam.aspx?L=152710&amp;D=15&amp;c=95FB911EC52794A9" id="aspnetForm">
+<div>
+<input type="hidden" name="ctl00_scriptManager_HiddenField" id="ctl00_scriptManager_HiddenField" value="">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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kOWIhuihqOekuuOBr+W/heOBmumjn+WTge+8keeuse+8iOiii++8ieOBguOBn+OCiuOBruaIkOWIhumHj+OBjOihqOekuuOBleOCjOOBpuOBhOOCi+OAggUBMGcQBbABIDIuIOODiuODiOODquOCpuODoOmHj+OBjOihqOekuuOBleOCjOOBpuOBhOOCi+WgtOWQiOOBr+OAgeODiuODiOODquOCpuODoOmHj++8iO+9je+9h++8icOX77yS77yO77yV77yUw7fvvJHvvJDvvJDvvJDjgafpo5/loanph4/vvIjvvYfvvInjgavnva7jgY3mj5vjgYjjgovjgZPjgajjgYzjgafjgY3jgovjgIIFATFnEAVkIDMuIOOAjOOCq+ODreODquODvOOCvOODreOAjeOBqOihqOekuuOBleOCjOOBpuOBhOOCi+OCguOBruOBr+OAgeOBmeOBueOBpu+8kO+9i++9g++9ge+9jOOBp+OBguOCi+OAggUBMmdkZAIED2QWAmYPZBYEAgEPZBYCZg9kFgICAQ8PFgIfAAVy5ZWPWzVdIOapn+iDveaAp+ihqOekuumjn+WTgeOBq+mWouOBmeOCi+asoeOBruaWh+eroOOBruOBhuOBoeato+OBl+OBhOOCguOBruOCkumBuOOCk+OBp+S4i+OBleOBhOOAgiAo6YWN54K577yaMjApZGQCAw9kFgJmD2QWAgIBDxAPFgIfAWdkDxYDZgIBAgIWAxAFfCAxLiDmqZ/og73mgKfooajnpLrpo5/lk4Hjga/ljprnlJ/lirTlg43nnIHjgavkuovliY3jgavlsYrjgZHlh7rjgozjgbDjgIHkuovmpa3ogIXjga7oh6rlt7Hosqzku7vjga7kuIvjgafooajnpLrjgafjgY3jgovjgIIFATBnEAWmASAyLiDmqZ/og73mgKfooajnpLrpo5/lk4Hjga/lk4Hnm67jgZTjgajjgavjgIHlm73jgYzmib/oqo3jgZnjgovjgIHjgIzns5bjga7lkLjlj47jgpLnt6njgoTjgYvjgavjgZnjgovjgI3jgarjganjgIHnibnlrprjga7mqZ/og73jgYzoqo3jgoHjgonjgozjgZ/po5/lk4HjgafjgYLjgovjgIIFATFnEAV2IDMuIOapn+iDveaAp+mjn+WTgeOBr+ihqOekuuOBmeOCi+apn+iDveOCkuenkeWtpueahOagueaLoOOBq+WfuuOBpeOBhOOBpuWuueWZqOOBq+ihqOekuuOBl+OBquOBkeOCjOOBsOOBquOCieOBquOBhOOAggUBMmdkZBgBBRtjdGwwMCRleGFtQm9keSRsdkV4YW1BbnN3ZXIPPCsACgIHPCsABQAIAgVkx9Pj0CUy2hcSC5WvdtnCs3Fwnvk=">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=XUNW2ZmtZKMJKQLX5czz23WVDOj6D9OT-Otqg4SYGJMpx_nIGZOw9Dh0D8NYJxjHbq6KuVWbGifcjMmEpkx2xBJdDeA1&amp;t=637812265420000000" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+//<![CDATA[
+var ExamSolvingData = {"QuestionCount":"5","QuestionIDs":["ctl00_examBody_lvExamAnswer_ctrl0_rdolExamQuestionSel","ctl00_examBody_lvExamAnswer_ctrl1_rdolExamQuestionSel","ctl00_examBody_lvExamAnswer_ctrl2_rdolExamQuestionSel","ctl00_examBody_lvExamAnswer_ctrl3_rdolExamQuestionSel","ctl00_examBody_lvExamAnswer_ctrl4_rdolExamQuestionSel"]}
+var isUnitUpperLimitCheckFlg = "False";
+var StudyMasterData = {"LessonCode":"152710","ExamProgramNo":"15","ContentsUrl":"/","StudyPageKindText":"3"}
+var __cultureInfo = '{"name":"ja-JP","numberFormat":{"CurrencyDecimalDigits":0,"CurrencyDecimalSeparator":".","IsReadOnly":false,"CurrencyGroupSizes":[3],"NumberGroupSizes":[3],"PercentGroupSizes":[3],"CurrencyGroupSeparator":",","CurrencySymbol":"¥","NaNSymbol":"NaN (非数値)","CurrencyNegativePattern":1,"NumberNegativePattern":1,"PercentPositivePattern":1,"PercentNegativePattern":1,"NegativeInfinitySymbol":"-∞","NegativeSign":"-","NumberDecimalDigits":2,"NumberDecimalSeparator":".","NumberGroupSeparator":",","CurrencyPositivePattern":0,"PositiveInfinitySymbol":"+∞","PositiveSign":"+","PercentDecimalDigits":2,"PercentDecimalSeparator":".","PercentGroupSeparator":",","PercentSymbol":"%","PerMilleSymbol":"‰","NativeDigits":["0","1","2","3","4","5","6","7","8","9"],"DigitSubstitution":1},"dateTimeFormat":{"AMDesignator":"午前","Calendar":{"MinSupportedDateTime":"\/Date(-62135596800000)\/","MaxSupportedDateTime":"\/Date(253402268399999)\/","AlgorithmType":1,"CalendarType":1,"Eras":[1],"TwoDigitYearMax":2029,"IsReadOnly":true},"DateSeparator":"/","FirstDayOfWeek":0,"CalendarWeekRule":0,"FullDateTimePattern":"yyyy\u0027年\u0027M\u0027月\u0027d\u0027日\u0027 H:mm:ss","LongDatePattern":"yyyy\u0027年\u0027M\u0027月\u0027d\u0027日\u0027","LongTimePattern":"H:mm:ss","MonthDayPattern":"M\u0027月\u0027d\u0027日\u0027","PMDesignator":"午後","RFC1123Pattern":"ddd, dd MMM yyyy HH\u0027:\u0027mm\u0027:\u0027ss \u0027GMT\u0027","ShortDatePattern":"yyyy/MM/dd","ShortTimePattern":"H:mm","SortableDateTimePattern":"yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss","TimeSeparator":":","UniversalSortableDateTimePattern":"yyyy\u0027-\u0027MM\u0027-\u0027dd HH\u0027:\u0027mm\u0027:\u0027ss\u0027Z\u0027","YearMonthPattern":"yyyy\u0027年\u0027M\u0027月\u0027","AbbreviatedDayNames":["日","月","火","水","木","金","土"],"ShortestDayNames":["日","月","火","水","木","金","土"],"DayNames":["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"],"AbbreviatedMonthNames":["1","2","3","4","5","6","7","8","9","10","11","12",""],"MonthNames":["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月",""],"IsReadOnly":true,"NativeCalendarName":"西暦 (日本語)","AbbreviatedMonthGenitiveNames":["1","2","3","4","5","6","7","8","9","10","11","12",""],"MonthGenitiveNames":["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月",""]}}';//]]>
+</script>
+
+<script src="/ScriptResource.axd?d=m3jXg6hE5MNZLqb5vw8D5C9qsTag8ECNXvnd9kNIkql_n9kTgTHss6Zsh3ccynRwz5JBGRMDk4v5g6AVZVnQZmdb2M-Y78nB5PT50MF5rhX9EBaYzx4wG1Kdu-hY3jiHUzP0ApD5HzhggiHHH6NAXw6fbxY1&amp;t=ffffffff934f7aa9" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=5Ebn01fgyFp95XDhOldbpOTlgCeW-0wYpQcaCvoRaiavgRVCsyfysMr1rMI-0LQQ1tUDIqvRA0GZxGw8oppeQJ-ESYBxAgo70q4bBeU_ZUanjwxKr6Vu8M0FwjCSrmHJV6SEbN9KafoOBVboj6mk_Ip2UoowNE-kMaX70GHET_5jqmpp0&amp;t=ffffffff934f7aa9" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=naUbhn4vDYFHhA2JWHhw5N6ZI0DhZgwJKkpMmR-MQYmh-1oTaeWQdpX4NY8pZZS8kY9KjvISq-NWd-752AvXOqFdU5UDZx3-Y6E_M9h_rgnoo3qCseiGiQeG1nYiEBLv8lHlyQF-paEELlSLz1H_gN10OuA1&amp;t=ffffffff866ff21d" type="text/javascript"></script>
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="5828B471">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEWFQLpzeCmBQLs+4LpDALz+4LpDAL8lKgHAsua0vYMAtSa0vYMAtWa0vYMAtv1+BgCntm+qQ4Cgdm+qQ4CgNm+qQ4CjraUxwICzYrP4Q0C0orP4Q0C04rP4Q0C3eXljwECqKmd8gMCt6md8gMCtqmd8gMCuMa3nA8ClKiNzw5JllAiDwl+3NCPMf35Va0pI55c1w==">
+</div>
+	
+		<script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$scriptManager', document.getElementById('aspnetForm'));
+Sys.WebForms.PageRequestManager.getInstance()._updateControls([], [], [], 90);
+//]]>
+</script>
+
+
+		
+    <script type="text/javascript">
+
+    	$(document).load(function () {
+    		windowResizeEventHandler();
+    		$(window).resize(windowResizeEventHandler);
+    		$('#tabs-pc').removeClass('tabs-pc-fixed');
+    		$('#main-container').removeClass('main-container-fixed');
+    	});
+
+    	window.addEventListener('load', function () {
+    		if (isUnitUpperLimitCheckFlg == "True") {
+    			if (confirm('1日に取得可能な上限の4単位に達しているため、本日これ以上の単位は発行されません。\n引き続き受講いただくことは可能ですが、単位取得の対象外となりますのであらかじめご了承ください。') == false) {
+    				window.close();
+    			}
+    		}
+    	});
+
+    	function windowResizeEventHandler() {
+
+    		var borderWidth = 2;
+    		$('#blkExamFixedArea').width($('table.tblExamAnswer').width() + borderWidth);
+    	}
+
+    	// 入力検証
+    	function validation() {
+    		
+    		var nocheckedCount = 0;
+    		var max = ExamSolvingData.QuestionIDs.length;
+    		for (var i = 0; i < max; i++) {
+
+    			var rdoid = ExamSolvingData.QuestionIDs[i];
+
+    			if ($("#" + rdoid + " input:radio:checked").length == 0) {
+    				nocheckedCount++;
+    			}
+
+    		}
+
+    		if (0 < nocheckedCount) {
+    			if (confirm("答えを作成していない項目が " + nocheckedCount + "個 あります。提出しますか？") == false) {
+    				return false;
+    			}
+    		}
+    		
+    		return true;
+
+    	}
+
+    	function ShowAlert() {
+    		if (!alert('メンテナンス中です。')) {
+    			window.close();
+    		}
+    	}
+
+	</script>
+
+
+		<div id="main-container">
+			<!-- ヘッダー -->
+			<header></header>
+			<!-- メイン講座 -->
+			<article id="contents">
+				<div id="tabs-pc">
+					<div class="panels">
+						<div class="tab-content">
+						<input id="panel-study-item" type="radio" name="panels">
+						<label id="panel-study-label" for="panel-study-item" class="panels-label-normal"><i class="icon-desktop"></i> 動画</label>
+						<!--<input id="panel-schedule-item" type="radio" name="panels"/>
+						<label id="panel-schedule-label" for="panel-schedule-item"><i class="icon-calendar"></i> スケジュール</label>
+						<input id="panel-information-item" type="radio" name="panels"/>
+						<label id="panel-information-label" for="panel-information-item"><i class="icon-bell"></i> お知らせ</label>-->
+						<input id="panel-exam-item" type="radio" name="panels" checked="checked">
+						<label id="panel-exam-label" for="panel-exam-item" class="panels-label-checked"><i class="icon-check"></i> 確認テスト</label>
+						<input id="panel-end-item" type="radio" name="panels">
+						<div id="logo"><img src="../images/logo.gif" alt="ロゴ" id="study-logo-image"></div>
+						<div id="panels-b1" class="panels-non-checked">
+							<div id="tabs-1" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+											
+								
+							</div>
+						</div>
+						<!--<div id="panels-b2">
+							<div id="tabs-2">
+								<div id="tabs-2a">
+												
+									
+								</div>
+							</div>
+						</div>
+						<div id="panels-b3">
+							<div id="tabs-3">
+								<div id="tabs-3a">
+												
+									
+								</div>
+							</div>
+						</div>-->
+						<div id="panels-b4" class="panels-checked-fixed">
+							<div id="tabs-4" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+								<div id="tabs-4a">
+									
+
+	<div class="wrap">
+
+		<div id="blkExamFixedArea">
+			<div id="blkExamCondition">
+				<span style="font-weight:bold;">名前：</span><span id="ctl00_examBody_lblApplicantName">相澤 良太</span>
+			</div>
+			<label id="panel-end-label" for="panel-end-item" class="btn-close"><i class="icon-remove bo-colorsyle"></i><br>終了</label>
+		</div>
+
+		<div class="clear"></div>
+
+		<div id="blkExamAnswer">
+
+			
+					<table id="ctl00_examBody_lvExamAnswer_tblExamAnswer" class="tblExamAnswer">
+
+		
+                
+					<tbody><tr id="ctl00_examBody_lvExamAnswer_ctrl0_rowQuestion" class="rowQuestion">
+			<td class="cellQuestion">
+							<span id="ctl00_examBody_lvExamAnswer_ctrl0_lblQuestion">問[1] 講演内容に関する次の文章の正誤を選んで下さい。
+<br>食事に関するアドバイスを行う時は、臨床検査値などから摂取に注意が必要な一般的な食品例を挙げて改善を促すのではなく、患者さんの普段の食習慣にアセスメントを行い患者個々の食事に対応した指導を行うことが大切である。 (配点：20)</span>
+						</td>
+		</tr>
+		
+					<tr id="ctl00_examBody_lvExamAnswer_ctrl0_rowAnswer" class="rowAnswer">
+			<td class="cellQuestionAnswer">
+							<table id="ctl00_examBody_lvExamAnswer_ctrl0_rdolExamQuestionSel" class="rdolExamQuestionSel" border="0">
+				<tbody><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl0_rdolExamQuestionSel_0" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl0$rdolExamQuestionSel" value="0"><label for="ctl00_examBody_lvExamAnswer_ctrl0_rdolExamQuestionSel_0"> 1. 正</label></td>
+				</tr><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl0_rdolExamQuestionSel_1" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl0$rdolExamQuestionSel" value="1"><label for="ctl00_examBody_lvExamAnswer_ctrl0_rdolExamQuestionSel_1"> 2. 誤</label></td>
+				</tr>
+			</tbody></table>
+						</td>
+		</tr>
+		
+
+				
+		
+                
+					<tr id="ctl00_examBody_lvExamAnswer_ctrl1_rowQuestion" class="rowQuestion">
+			<td class="cellQuestion">
+							<span id="ctl00_examBody_lvExamAnswer_ctrl1_lblQuestion">問[2] 日本人の食事摂取基準２０１５に関する次の文章のうち正しものを選択してください。 (配点：20)</span>
+						</td>
+		</tr>
+		
+					<tr id="ctl00_examBody_lvExamAnswer_ctrl1_rowAnswer" class="rowAnswer">
+			<td class="cellQuestionAnswer">
+							<table id="ctl00_examBody_lvExamAnswer_ctrl1_rdolExamQuestionSel" class="rdolExamQuestionSel" border="0">
+				<tbody><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl1_rdolExamQuestionSel_0" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl1$rdolExamQuestionSel" value="0"><label for="ctl00_examBody_lvExamAnswer_ctrl1_rdolExamQuestionSel_0"> 1. 以前は「日本人の栄養所要量」と呼ばれていたが、２００５年版から現在の「日本人の栄養摂取基準」に改められ１０年ごとに改定されている。</label></td>
+				</tr><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl1_rdolExamQuestionSel_1" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl1$rdolExamQuestionSel" value="1"><label for="ctl00_examBody_lvExamAnswer_ctrl1_rdolExamQuestionSel_1"> 2. ２０１５年版も、日本人の健康保持・増進を目的に作られおり、生活習慣病の発症予防や重症化予防まで視野に入れたものではない。</label></td>
+				</tr><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl1_rdolExamQuestionSel_2" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl1$rdolExamQuestionSel" value="2"><label for="ctl00_examBody_lvExamAnswer_ctrl1_rdolExamQuestionSel_2"> 3. ２０１５年版からは栄養指導に活用する場合の基本として、いままでのＰＤＣＡサイクルに加えてアセスメントを行うことが重要であると示されている。</label></td>
+				</tr>
+			</tbody></table>
+						</td>
+		</tr>
+		
+
+				
+		
+                
+					<tr id="ctl00_examBody_lvExamAnswer_ctrl2_rowQuestion" class="rowQuestion">
+			<td class="cellQuestion">
+							<span id="ctl00_examBody_lvExamAnswer_ctrl2_lblQuestion">問[3] 食事調査に関する次の文章のうち正しいものを選んで下さい。 (配点：20)</span>
+						</td>
+		</tr>
+		
+					<tr id="ctl00_examBody_lvExamAnswer_ctrl2_rowAnswer" class="rowAnswer">
+			<td class="cellQuestionAnswer">
+							<table id="ctl00_examBody_lvExamAnswer_ctrl2_rdolExamQuestionSel" class="rdolExamQuestionSel" border="0">
+				<tbody><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl2_rdolExamQuestionSel_0" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl2$rdolExamQuestionSel" value="0"><label for="ctl00_examBody_lvExamAnswer_ctrl2_rdolExamQuestionSel_0"> 1. 食事記録法は、対象者が一定期間に食べたもの（料理名、食品名とその重量など）を自分で記録する方法で、実際に食べたものを正確に記載できる、対象者や調査員の負担も少ない方法である。</label></td>
+				</tr><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl2_rdolExamQuestionSel_1" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl2$rdolExamQuestionSel" value="1"><label for="ctl00_examBody_lvExamAnswer_ctrl2_rdolExamQuestionSel_1"> 2. ＢＤＨＱ（簡易型自記式食事歴法質問票）は最近１ヶ月間の食習慣をしることができる簡便な質問票である。特定保健指導時や、個人ごとの食べ癖などを把握することができる。個人に合わせた結果票で指導ができるよう個人結果票が目的別に作成できるようになっている。</label></td>
+				</tr><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl2_rdolExamQuestionSel_2" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl2$rdolExamQuestionSel" value="2"><label for="ctl00_examBody_lvExamAnswer_ctrl2_rdolExamQuestionSel_2"> 3. 陰膳法は、前日に食べたものを思い出し、調査員が対象者から聞き取る方法で、対象者の負担は少ないが、記憶に依存し調査員の技術が必要な調査法である。</label></td>
+				</tr>
+			</tbody></table>
+						</td>
+		</tr>
+		
+
+				
+		
+                
+					<tr id="ctl00_examBody_lvExamAnswer_ctrl3_rowQuestion" class="rowQuestion">
+			<td class="cellQuestion">
+							<span id="ctl00_examBody_lvExamAnswer_ctrl3_lblQuestion">問[4] 栄養成分表示に関する次の文章のうち正しいものを選んで下さい。 (配点：20)</span>
+						</td>
+		</tr>
+		
+					<tr id="ctl00_examBody_lvExamAnswer_ctrl3_rowAnswer" class="rowAnswer">
+			<td class="cellQuestionAnswer">
+							<table id="ctl00_examBody_lvExamAnswer_ctrl3_rdolExamQuestionSel" class="rdolExamQuestionSel" border="0">
+				<tbody><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl3_rdolExamQuestionSel_0" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl3$rdolExamQuestionSel" value="0"><label for="ctl00_examBody_lvExamAnswer_ctrl3_rdolExamQuestionSel_0"> 1. 食品の栄養成分表示は必ず食品１箱（袋）あたりの成分量が表示されている。</label></td>
+				</tr><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl3_rdolExamQuestionSel_1" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl3$rdolExamQuestionSel" value="1"><label for="ctl00_examBody_lvExamAnswer_ctrl3_rdolExamQuestionSel_1"> 2. ナトリウム量が表示されている場合は、ナトリウム量（ｍｇ）×２．５４÷１０００で食塩量（ｇ）に置き換えることができる。</label></td>
+				</tr><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl3_rdolExamQuestionSel_2" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl3$rdolExamQuestionSel" value="2"><label for="ctl00_examBody_lvExamAnswer_ctrl3_rdolExamQuestionSel_2"> 3. 「カロリーゼロ」と表示されているものは、すべて０ｋｃａｌである。</label></td>
+				</tr>
+			</tbody></table>
+						</td>
+		</tr>
+		
+
+				
+		
+                
+					<tr id="ctl00_examBody_lvExamAnswer_ctrl4_rowQuestion" class="rowQuestion">
+			<td class="cellQuestion">
+							<span id="ctl00_examBody_lvExamAnswer_ctrl4_lblQuestion">問[5] 機能性表示食品に関する次の文章のうち正しいものを選んで下さい。 (配点：20)</span>
+						</td>
+		</tr>
+		
+					<tr id="ctl00_examBody_lvExamAnswer_ctrl4_rowAnswer" class="rowAnswer">
+			<td class="cellQuestionAnswer">
+							<table id="ctl00_examBody_lvExamAnswer_ctrl4_rdolExamQuestionSel" class="rdolExamQuestionSel" border="0">
+				<tbody><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl4_rdolExamQuestionSel_0" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl4$rdolExamQuestionSel" value="0"><label for="ctl00_examBody_lvExamAnswer_ctrl4_rdolExamQuestionSel_0"> 1. 機能性表示食品は厚生労働省に事前に届け出れば、事業者の自己責任の下で表示できる。</label></td>
+				</tr><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl4_rdolExamQuestionSel_1" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl4$rdolExamQuestionSel" value="1"><label for="ctl00_examBody_lvExamAnswer_ctrl4_rdolExamQuestionSel_1"> 2. 機能性表示食品は品目ごとに、国が承認する、「糖の吸収を緩やかにする」など、特定の機能が認められた食品である。</label></td>
+				</tr><tr>
+					<td><input id="ctl00_examBody_lvExamAnswer_ctrl4_rdolExamQuestionSel_2" type="radio" name="ctl00$examBody$lvExamAnswer$ctrl4$rdolExamQuestionSel" value="2"><label for="ctl00_examBody_lvExamAnswer_ctrl4_rdolExamQuestionSel_2"> 3. 機能性食品は表示する機能を科学的根拠に基づいて容器に表示しなければならない。</label></td>
+				</tr>
+			</tbody></table>
+						</td>
+		</tr>
+		
+
+				</tbody></table>
+
+				
+
+		</div>
+		
+		<div class="btn-exam-answer">
+			<a onclick="return validation();" id="ctl00_examBody_lnkExamAnswerSubmit" href="javascript:__doPostBack('ctl00$examBody$lnkExamAnswerSubmit','')">答案提出</a>
+		</div>
+
+		<div class="gotoTopForStudyV3"><a href="#blkExamFixedArea" title="ページTOPへ戻る"><img src="../images/top.jpg" alt="ページTOPへ戻る"></a></div>
+
+	</div>
+
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="next-study-mask-area" style="display: none;"></div>
+			</div></article>
+			<article id="mb-contents"><div>この画面サイズでは学習できません。</div></article>
+
+			<!-- フッター -->
+			<footer>
+				<div id="copyright"></div>
+			</footer>
+		</div>
+	
+
+<script type="text/javascript">
+//<![CDATA[
+Sys.Application.initialize();
+//]]>
+</script>
+</form>
+
+
+</body></html>

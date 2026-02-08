@@ -1,0 +1,342 @@
+<html lang="ja"><head><meta http-equiv="pragma" content="no-cache"><meta http-equiv="cache-control" content="no-cache"><meta http-equiv="expires" content="0"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="Content-Style-Type" content="text/css"><meta name="Description" content="いつでもどこでもスキルアップ。調剤現場に役立つ多彩なコンテンツを効果的に学習できるMPラーニング。研修認定薬剤師対応。"><meta name="Keywords" content="MPラーニング,研修認定薬剤師,認定,薬剤,シール,登録販売者,医薬品,一般用医薬品,資格,試験,コンテンツ,対策,改正薬事法,薬事法,e-Learning,第２類,第３類,研修手帳"><link rel="shortcut icon"><link rel="icon" type="image/gif"><link href="../css/font-awesome.css" rel="stylesheet" type="text/css"><link href="../css/studyV3-common-20250212.css" rel="stylesheet" type="text/css"><link href="../css/font-awesome-animation.css" rel="stylesheet" type="text/css">
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-K4HMFQ8E3K"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag() { dataLayer.push(arguments); }
+	gtag('js', new Date());
+
+	gtag('config', 'G-K4HMFQ8E3K');
+</script>
+	
+	<script type="text/javascript" src="../script/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="../script/jquery-ui.js"></script>
+
+	<script type="text/javascript">
+		var confirmMessageStudy = "※途中まで見ていた時間を保持する場合は、「途中終了」を必ずクリックしてください。しない場合は、最初からの再生となります。";
+		var confirmMessageExam = "答案提出をしていない方は、進捗を保存せずに終了します。";
+		var touchEvent = 'click';
+
+		$(function () {
+			//console.log('StudyMasterV3初期化');
+
+			$('#tabs-1').tabs();
+			//$('#tabs-2').tabs();
+			//$('#tabs-3').tabs();
+
+			$('#tabs-4').tabs();
+
+			$('#next-study-mask-area').hide();
+
+		});
+
+		$(document).ready(function () {
+
+			setMainTabRadioButtonChecked();
+
+			/*if (StudyMasterData.ExistsInformation == "False") {
+				$('#panel-information-item').hide();
+				$('#panel-information-label').hide();
+				$('#panels-b3').hide();
+			}*/
+
+			var confirmMessage = "";
+
+			if (StudyMasterData.StudyPageKindText == "0") {
+				confirmMessage = confirmMessageStudy;
+			} else {
+				confirmMessage = confirmMessageExam;
+			}
+
+			$('#panel-study-item').on(touchEvent, function () {
+
+				if (StudyMasterData.StudyPageKindText == "0") return;
+
+				// レッスン画面を開く
+				// 画面リサイズ可能にしたとき、動画プレイヤーの拡大ボタンクリックでもwindowのリサイズイベントが実行されてしまうため、動画のサイズを固定に変更
+				// 画面リサイズ可能のレッスン画面を開く際は、下記切り替える
+				//var urlText = "LessonStudyResizable.aspx?L=" + StudyMasterData.LessonCode;
+				var urlText = "LessonStudyFixed.aspx?L=" + StudyMasterData.LessonCode;
+
+				if (StudyMasterData.StudyPageKindText == "3" || StudyMasterData.StudyPageKindText == "4" || StudyMasterData.StudyPageKindText == "5") {
+					urlText = urlText + "&FromExam=1"
+				}
+				
+				location.href = urlText;
+			});
+
+			/*$('#panel-schedule-item').on(touchEvent, function () {
+
+			if (!confirm(confirmMessage)) {
+			setMainTabRadioButtonChecked();
+			return false;
+			}
+
+			location.href = "LessonSchedule.aspx?L=" + StudyMasterData.LessonCode + "#tabs-2";
+			});*/
+
+			/*$('#panel-information-item').on(touchEvent, function () {
+
+				if (StudyMasterData.StudyPageKindText == "0" && !confirm(confirmMessage)) {
+					setMainTabRadioButtonChecked();
+					return false;
+				}
+
+				location.href = "LessonInformation.aspx?L=" + StudyMasterData.LessonCode + "#tabs-3";
+			});*/
+
+			$('#panel-exam-item').on(touchEvent, function () {
+
+				if (StudyMasterData.StudyPageKindText == "0" && !confirm(confirmMessage)) {
+					setMainTabRadioButtonChecked();
+					return false;
+				}
+
+				location.href = "Exam.aspx?L=" + StudyMasterData.LessonCode + "&D=" + StudyMasterData.ExamProgramNo;
+			});
+
+			$('#panel-end-item').on(touchEvent, function () {
+
+				if ((StudyMasterData.StudyPageKindText == "0" || StudyMasterData.StudyPageKindText == "3") && !confirm(confirmMessage)) {
+					setMainTabRadioButtonChecked();
+					return false;
+				}
+
+				window.close();
+			});
+
+		});
+
+		function setMainTabRadioButtonChecked() {
+
+			if (StudyMasterData.StudyPageKindText == "0" || StudyMasterData.StudyPageKindText == "1" || StudyMasterData.StudyPageKindText == "2") {
+
+				// 動画　タブ
+				$('#panels-b1').removeClass('panels-non-checked');
+				$('#panels-b1').addClass('panels-checked');
+				$('#panel-study-item').attr('checked', true);
+				$('#panel-study-label').removeClass('panels-label-normal');
+				$('#panel-study-label').addClass('panels-label-checked');
+
+				// 確認テスト　タブ
+				//$('#panel-exam-item').hide();
+				//$('#panel-exam-label').hide();
+				//$('#panels-b4').hide();
+				$('#panels-b4').removeClass('panels-checked-fixed');
+				$('#panels-b4').addClass('panels-checked');
+				$('#panel-exam-item').attr('checked', false);
+				$('#panel-exam-label').removeClass('panels-label-checked');
+				$('#panel-exam-label').addClass('panels-label-normal');
+
+			} else {
+
+				// 動画　タブ
+				$('#panels-b1').removeClass('panels-checked');
+				$('#panels-b1').addClass('panels-non-checked');
+				$('#panel-study-item').attr('checked', false);
+				$('#panel-study-label').removeClass('panels-label-checked');
+				$('#panel-study-label').addClass('panels-label-normal');
+
+				// 確認テスト　タブ
+				$('#panels-b4').removeClass('panels-non-checked');
+				$('#panels-b4').addClass('panels-checked-fixed');
+				$('#panel-exam-item').attr('checked', true);
+				$('#panel-exam-label').removeClass('panels-label-normal');
+				$('#panel-exam-label').addClass('panels-label-checked');
+
+			}
+
+			/*if (StudyMasterData.StudyPageKindText == "2") {
+
+			$('#panels-b2').removeClass('panels-non-checked');
+			$('#panels-b2').addClass('panels-checked');
+			$('#panel-schedule-item').attr('checked', true);
+			$('#panel-schedule-label').removeClass('panels-label-normal');
+			$('#panel-schedule-label').addClass('panels-label-checked');
+			} else {
+
+			$('#panels-b2').removeClass('panels-checked');
+			$('#panels-b2').addClass('panels-non-checked');
+			$('#panel-schedule-item').attr('checked', false);
+			$('#panel-schedule-label').removeClass('panels-label-checked');
+			$('#panel-schedule-label').addClass('panels-label-normal');
+			}*/
+
+			/*if (StudyMasterData.StudyPageKindText == "1") {
+
+				$('#panels-b3').removeClass('panels-non-checked');
+				$('#panels-b3').addClass('panels-checked');
+				$('#panel-information-item').attr('checked', true);
+				$('#panel-information-label').removeClass('panels-label-normal');
+				$('#panel-information-label').addClass('panels-label-checked');
+			} else {
+
+				$('#panels-b3').removeClass('panels-checked');
+				$('#panels-b3').addClass('panels-non-checked');
+				$('#panel-information-item').attr('checked', false);
+				$('#panel-information-label').removeClass('panels-label-checked');
+				$('#panel-information-label').addClass('panels-label-normal');
+			}*/
+
+		}
+	</script>
+
+	<title>
+	MPラーニング　アンケート
+</title><link href="../css/studyV3-fixed-20221116.css" rel="stylesheet" type="text/css"></head>
+<body>
+	<form name="aspnetForm" method="post" action="QuestionnaireEntrance.aspx?c=95FB911EC52794A9&amp;L=152710" id="aspnetForm">
+<div>
+<input type="hidden" name="ctl00_scriptManager_HiddenField" id="ctl00_scriptManager_HiddenField" value="">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKMTExNzk1NzM2OWRkJu54p5iaEMOKNO4q1eTwnHV9tLQ=">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=XUNW2ZmtZKMJKQLX5czz23WVDOj6D9OT-Otqg4SYGJMpx_nIGZOw9Dh0D8NYJxjHbq6KuVWbGifcjMmEpkx2xBJdDeA1&amp;t=637812265420000000" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+//<![CDATA[
+var StudyMasterData = {"LessonCode":"152710","ExamProgramNo":"15","ContentsUrl":"/","StudyPageKindText":"5"}
+var __cultureInfo = '{"name":"ja-JP","numberFormat":{"CurrencyDecimalDigits":0,"CurrencyDecimalSeparator":".","IsReadOnly":false,"CurrencyGroupSizes":[3],"NumberGroupSizes":[3],"PercentGroupSizes":[3],"CurrencyGroupSeparator":",","CurrencySymbol":"¥","NaNSymbol":"NaN (非数値)","CurrencyNegativePattern":1,"NumberNegativePattern":1,"PercentPositivePattern":1,"PercentNegativePattern":1,"NegativeInfinitySymbol":"-∞","NegativeSign":"-","NumberDecimalDigits":2,"NumberDecimalSeparator":".","NumberGroupSeparator":",","CurrencyPositivePattern":0,"PositiveInfinitySymbol":"+∞","PositiveSign":"+","PercentDecimalDigits":2,"PercentDecimalSeparator":".","PercentGroupSeparator":",","PercentSymbol":"%","PerMilleSymbol":"‰","NativeDigits":["0","1","2","3","4","5","6","7","8","9"],"DigitSubstitution":1},"dateTimeFormat":{"AMDesignator":"午前","Calendar":{"MinSupportedDateTime":"\/Date(-62135596800000)\/","MaxSupportedDateTime":"\/Date(253402268399999)\/","AlgorithmType":1,"CalendarType":1,"Eras":[1],"TwoDigitYearMax":2029,"IsReadOnly":true},"DateSeparator":"/","FirstDayOfWeek":0,"CalendarWeekRule":0,"FullDateTimePattern":"yyyy\u0027年\u0027M\u0027月\u0027d\u0027日\u0027 H:mm:ss","LongDatePattern":"yyyy\u0027年\u0027M\u0027月\u0027d\u0027日\u0027","LongTimePattern":"H:mm:ss","MonthDayPattern":"M\u0027月\u0027d\u0027日\u0027","PMDesignator":"午後","RFC1123Pattern":"ddd, dd MMM yyyy HH\u0027:\u0027mm\u0027:\u0027ss \u0027GMT\u0027","ShortDatePattern":"yyyy/MM/dd","ShortTimePattern":"H:mm","SortableDateTimePattern":"yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss","TimeSeparator":":","UniversalSortableDateTimePattern":"yyyy\u0027-\u0027MM\u0027-\u0027dd HH\u0027:\u0027mm\u0027:\u0027ss\u0027Z\u0027","YearMonthPattern":"yyyy\u0027年\u0027M\u0027月\u0027","AbbreviatedDayNames":["日","月","火","水","木","金","土"],"ShortestDayNames":["日","月","火","水","木","金","土"],"DayNames":["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"],"AbbreviatedMonthNames":["1","2","3","4","5","6","7","8","9","10","11","12",""],"MonthNames":["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月",""],"IsReadOnly":true,"NativeCalendarName":"西暦 (日本語)","AbbreviatedMonthGenitiveNames":["1","2","3","4","5","6","7","8","9","10","11","12",""],"MonthGenitiveNames":["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月",""]}}';//]]>
+</script>
+
+<script src="/ScriptResource.axd?d=m3jXg6hE5MNZLqb5vw8D5C9qsTag8ECNXvnd9kNIkql_n9kTgTHss6Zsh3ccynRwz5JBGRMDk4v5g6AVZVnQZmdb2M-Y78nB5PT50MF5rhX9EBaYzx4wG1Kdu-hY3jiHUzP0ApD5HzhggiHHH6NAXw6fbxY1&amp;t=ffffffff934f7aa9" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=5Ebn01fgyFp95XDhOldbpOTlgCeW-0wYpQcaCvoRaiavgRVCsyfysMr1rMI-0LQQ1tUDIqvRA0GZxGw8oppeQJ-ESYBxAgo70q4bBeU_ZUanjwxKr6Vu8M0FwjCSrmHJV6SEbN9KafoOBVboj6mk_Ip2UoowNE-kMaX70GHET_5jqmpp0&amp;t=ffffffff934f7aa9" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=naUbhn4vDYFHhA2JWHhw5N6ZI0DhZgwJKkpMmR-MQYmh-1oTaeWQdpX4NY8pZZS8kY9KjvISq-NWd-752AvXOqFdU5UDZx3-Y6E_M9h_rgnoo3qCseiGiQeG1nYiEBLv8lHlyQF-paEELlSLz1H_gN10OuA1&amp;t=ffffffff866ff21d" type="text/javascript"></script>
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="34E1DC40">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEWAgKz37eHDALdoPqPBCUnDjtWSAu+gj1wXicuYM/lQwzV">
+</div>
+	
+		<script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$scriptManager', document.getElementById('aspnetForm'));
+Sys.WebForms.PageRequestManager.getInstance()._updateControls([], [], [], 90);
+//]]>
+</script>
+
+
+		
+	<script type="text/javascript">
+		$(function () {
+			$('#tabs-pc').removeClass('tabs-pc-fixed');
+			$('#main-container').removeClass('main-container-fixed');
+		});
+	</script>
+
+
+		<div id="main-container">
+			<!-- ヘッダー -->
+			<header></header>
+			<!-- メイン講座 -->
+			<article id="contents">
+				<div id="tabs-pc">
+					<div class="panels">
+						<div class="tab-content">
+						<input id="panel-study-item" type="radio" name="panels">
+						<label id="panel-study-label" for="panel-study-item" class="panels-label-normal"><i class="icon-desktop"></i> 動画</label>
+						<!--<input id="panel-schedule-item" type="radio" name="panels"/>
+						<label id="panel-schedule-label" for="panel-schedule-item"><i class="icon-calendar"></i> スケジュール</label>
+						<input id="panel-information-item" type="radio" name="panels"/>
+						<label id="panel-information-label" for="panel-information-item"><i class="icon-bell"></i> お知らせ</label>-->
+						<input id="panel-exam-item" type="radio" name="panels" checked="checked">
+						<label id="panel-exam-label" for="panel-exam-item" class="panels-label-checked"><i class="icon-check"></i> 確認テスト</label>
+						<input id="panel-end-item" type="radio" name="panels">
+						<div id="logo"><img src="../images/logo.gif" alt="ロゴ" id="study-logo-image"></div>
+						<div id="panels-b1" class="panels-non-checked">
+							<div id="tabs-1" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+											
+								
+							</div>
+						</div>
+						<!--<div id="panels-b2">
+							<div id="tabs-2">
+								<div id="tabs-2a">
+												
+									
+								</div>
+							</div>
+						</div>
+						<div id="panels-b3">
+							<div id="tabs-3">
+								<div id="tabs-3a">
+												
+									
+								</div>
+							</div>
+						</div>-->
+						<div id="panels-b4" class="panels-checked-fixed">
+							<div id="tabs-4" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+								<div id="tabs-4a">
+									
+
+	<div class="wrap">
+
+		<div id="blkExamFixedArea">
+			<div style="float:left;"></div>
+			<label id="panel-end-label" for="panel-end-item" class="btn-close"><i class="icon-remove bo-colorsyle"></i><br>終了</label>
+			<div class="clear"></div>
+		</div>
+
+		<div id="blkMessage">
+			<p>
+				お疲れ様でした。<br><br>
+				最後に、アンケートにご協力いただける方は<br>
+				「アンケートへ」ボタンをクリックし、<br>
+				アンケート画面へとお進みください。<br>
+			</p>
+        
+		</div>
+
+		<div class="btn-to-question">
+			<a id="ctl00_examBody_cmdStartQuestionnaire" href="javascript:__doPostBack('ctl00$examBody$cmdStartQuestionnaire','')">アンケートへ</a>
+		</div>
+
+	</div>
+
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="next-study-mask-area" style="display: none;"></div>
+			</div></article>
+			<article id="mb-contents"><div>この画面サイズでは学習できません。</div></article>
+
+			<!-- フッター -->
+			<footer>
+				<div id="copyright"></div>
+			</footer>
+		</div>
+	
+
+<script type="text/javascript">
+//<![CDATA[
+Sys.Application.initialize();
+//]]>
+</script>
+</form>
+
+
+</body></html>
