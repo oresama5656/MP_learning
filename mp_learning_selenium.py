@@ -28,11 +28,13 @@ class MPLearningAutoTool:
         self.monitor_thread = None
         self.main_window = None  # メインウィンドウのハンドル
         self.popup_window = None  # ポップアップウィンドウのハンドル
+        self.queue_list = []  # 予約リスト
+        self.continuous_mode = False  # 連続受講モード
         
         # GUI作成
         self.root = tk.Tk()
-        self.root.title("MPラーニング 自動受講 v2")
-        self.root.geometry("380x280")
+        self.root.title("MPラーニング 自動受講 v3")
+        self.root.geometry("400x500")
         self.root.attributes("-topmost", True)
         self.root.configure(bg='#2C3E50')
         
@@ -44,7 +46,7 @@ class MPLearningAutoTool:
             bg='#2C3E50',
             fg='#ECF0F1'
         )
-        self.status_label.pack(pady=10)
+        self.status_label.pack(pady=5)
         
         # 詳細ラベル
         self.detail_label = tk.Label(
@@ -54,52 +56,135 @@ class MPLearningAutoTool:
             bg='#2C3E50',
             fg='#BDC3C7'
         )
-        self.detail_label.pack(pady=5)
+        self.detail_label.pack(pady=3)
+        
+        # ボタンフレーム
+        btn_frame = tk.Frame(self.root, bg='#2C3E50')
+        btn_frame.pack(pady=5)
         
         # ブラウザ起動ボタン
         self.browser_button = tk.Button(
-            self.root, 
+            btn_frame, 
             text="ブラウザ起動", 
             command=self.start_browser,
-            width=20, height=2,
+            width=12, height=1,
             bg='#3498DB', fg='white',
-            font=('Arial', 10, 'bold')
+            font=('Arial', 9, 'bold')
         )
-        self.browser_button.pack(pady=5)
+        self.browser_button.pack(side=tk.LEFT, padx=3)
         
         # 監視開始ボタン
         self.start_button = tk.Button(
-            self.root, 
+            btn_frame, 
             text="監視開始", 
             command=self.start_monitoring,
-            width=20, height=2,
+            width=12, height=1,
             bg='#27AE60', fg='white',
-            font=('Arial', 10, 'bold'),
+            font=('Arial', 9, 'bold'),
             state=tk.DISABLED
         )
-        self.start_button.pack(pady=5)
+        self.start_button.pack(side=tk.LEFT, padx=3)
         
         # 監視停止ボタン
         self.stop_button = tk.Button(
-            self.root, 
+            btn_frame, 
             text="監視停止", 
             command=self.stop_monitoring,
-            width=20, height=2,
+            width=12, height=1,
             bg='#E74C3C', fg='white',
-            font=('Arial', 10, 'bold'),
+            font=('Arial', 9, 'bold'),
             state=tk.DISABLED
         )
-        self.stop_button.pack(pady=5)
+        self.stop_button.pack(side=tk.LEFT, padx=3)
         
         # ウィンドウ数ラベル
         self.window_label = tk.Label(
             self.root,
             text="ウィンドウ数: -",
-            font=('Helvetica', 10),
+            font=('Helvetica', 9),
             bg='#2C3E50',
             fg='#95A5A6'
         )
-        self.window_label.pack(pady=5)
+        self.window_label.pack(pady=3)
+        
+        # === 予約機能セクション ===
+        queue_frame = tk.LabelFrame(
+            self.root,
+            text=" 講座予約 ",
+            font=('Helvetica', 10, 'bold'),
+            bg='#2C3E50',
+            fg='#ECF0F1'
+        )
+        queue_frame.pack(pady=10, padx=10, fill=tk.BOTH, expand=True)
+        
+        # 予約ボタンフレーム
+        queue_btn_frame = tk.Frame(queue_frame, bg='#2C3E50')
+        queue_btn_frame.pack(pady=5)
+        
+        # 「この講座を予約」ボタン
+        self.add_queue_button = tk.Button(
+            queue_btn_frame,
+            text="この講座を予約",
+            command=self.add_to_queue,
+            width=15, height=1,
+            bg='#9B59B6', fg='white',
+            font=('Arial', 9, 'bold'),
+            state=tk.DISABLED
+        )
+        self.add_queue_button.pack(side=tk.LEFT, padx=3)
+        
+        # 「選択削除」ボタン
+        self.remove_queue_button = tk.Button(
+            queue_btn_frame,
+            text="選択削除",
+            command=self.remove_from_queue,
+            width=10, height=1,
+            bg='#7F8C8D', fg='white',
+            font=('Arial', 9, 'bold')
+        )
+        self.remove_queue_button.pack(side=tk.LEFT, padx=3)
+        
+        # 予約件数ラベル
+        self.queue_count_label = tk.Label(
+            queue_frame,
+            text="予約: 0件",
+            font=('Helvetica', 10, 'bold'),
+            bg='#2C3E50',
+            fg='#F39C12'
+        )
+        self.queue_count_label.pack(pady=3)
+        
+        # 予約リスト（Listbox）
+        list_frame = tk.Frame(queue_frame, bg='#2C3E50')
+        list_frame.pack(pady=5, padx=5, fill=tk.BOTH, expand=True)
+        
+        self.queue_listbox = tk.Listbox(
+            list_frame,
+            height=6,
+            font=('Consolas', 9),
+            selectmode=tk.SINGLE,
+            bg='#34495E',
+            fg='#ECF0F1',
+            selectbackground='#3498DB'
+        )
+        self.queue_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        scrollbar = tk.Scrollbar(list_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.queue_listbox.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.queue_listbox.yview)
+        
+        # 「連続受講開始」ボタン
+        self.continuous_button = tk.Button(
+            queue_frame,
+            text="連続受講開始",
+            command=self.start_continuous,
+            width=20, height=2,
+            bg='#E67E22', fg='white',
+            font=('Arial', 10, 'bold'),
+            state=tk.DISABLED
+        )
+        self.continuous_button.pack(pady=8)
         
         # ウィンドウを閉じる際の処理
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -128,6 +213,8 @@ class MPLearningAutoTool:
             self.detail_label.config(text="動画再生画面（ポップアップ）を開いてから監視開始")
             self.browser_button.config(state=tk.DISABLED)
             self.start_button.config(state=tk.NORMAL)
+            self.add_queue_button.config(state=tk.NORMAL)
+            self.continuous_button.config(state=tk.NORMAL)
             
         except Exception as e:
             messagebox.showerror("エラー", f"ブラウザ起動に失敗:\n{e}")
@@ -140,7 +227,10 @@ class MPLearningAutoTool:
                 if handle != self.main_window:
                     # メインウィンドウ以外を確認
                     self.driver.switch_to.window(handle)
-                    if "レッスン" in self.driver.title or "Lesson" in self.driver.title:
+                    title = self.driver.title
+                    url = self.driver.current_url
+                    # タイトルまたはURLで判定
+                    if "レッスン" in title or "Lesson" in title or "LessonStudy" in url:
                         return handle
             return None
         except:
@@ -183,6 +273,174 @@ class MPLearningAutoTool:
             self.root.after(0, lambda: self.detail_label.config(text=text))
         except:
             pass
+    
+    def update_queue_display(self):
+        """予約リスト表示を更新"""
+        self.queue_listbox.delete(0, tk.END)
+        for i, lesson_id in enumerate(self.queue_list):
+            self.queue_listbox.insert(tk.END, f"{i+1}. L={lesson_id}")
+        self.queue_count_label.config(text=f"予約: {len(self.queue_list)}件")
+    
+    def add_to_queue(self):
+        """現在のポップアップウィンドウの講座を予約リストに追加"""
+        if self.driver is None:
+            messagebox.showwarning("警告", "ブラウザが起動していません")
+            return
+        
+        try:
+            # ポップアップウィンドウを探す
+            popup = self.find_popup_window()
+            if popup is None:
+                # 確認テスト画面やレッスン画面も含めて探す
+                for handle in self.driver.window_handles:
+                    if handle != self.main_window:
+                        self.driver.switch_to.window(handle)
+                        url = self.driver.current_url
+                        if "LessonStudyFixed" in url or "Lesson" in url:
+                            popup = handle
+                            break
+            
+            if popup is None:
+                messagebox.showwarning("警告", "講座画面が見つかりません。\n講座を開いてから予約してください。")
+                return
+            
+            self.driver.switch_to.window(popup)
+            url = self.driver.current_url
+            
+            # URLから講座IDを抽出
+            if "L=" in url:
+                lesson_id = url.split("L=")[-1].split("&")[0]
+            else:
+                messagebox.showwarning("警告", "講座IDを取得できませんでした")
+                return
+            
+            # 既に予約済みかチェック
+            if lesson_id in self.queue_list:
+                messagebox.showinfo("情報", "この講座は既に予約済みです")
+                return
+            
+            # 予約リストに講座IDを追加
+            self.queue_list.append(lesson_id)
+            self.update_queue_display()
+            
+            # ポップアップを閉じる
+            self.driver.close()
+            self.driver.switch_to.window(self.main_window)
+            
+            print(f"講座を予約: L={lesson_id}")
+            self.detail_label.config(text=f"予約追加: {len(self.queue_list)}件目")
+            
+        except Exception as e:
+            print(f"予約追加エラー: {e}")
+            messagebox.showerror("エラー", f"予約追加に失敗:\n{e}")
+    
+    def remove_from_queue(self):
+        """選択した講座を予約リストから削除"""
+        selection = self.queue_listbox.curselection()
+        if not selection:
+            messagebox.showwarning("警告", "削除する講座を選択してください")
+            return
+        
+        index = selection[0]
+        removed = self.queue_list.pop(index)
+        self.update_queue_display()
+        print(f"予約削除: {removed}")
+    
+    def start_continuous(self):
+        """連続受講を開始"""
+        if self.driver is None:
+            messagebox.showwarning("警告", "ブラウザを起動してください")
+            return
+        
+        if len(self.queue_list) == 0:
+            messagebox.showwarning("警告", "予約リストが空です。\n講座を予約してから開始してください。")
+            return
+        
+        # 連続受講モードを有効化
+        self.continuous_mode = True
+        
+        # 最初の講座を開く
+        self.open_next_queue()
+    
+    def open_next_queue(self):
+        """予約リストの次の講座を開く"""
+        if len(self.queue_list) == 0:
+            self.continuous_mode = False
+            self.status_label.config(text="全講座完了！", fg='#F39C12')
+            self.detail_label.config(text="予約リストの講座を全て受講しました")
+            messagebox.showinfo("完了", "予約した講座を全て受講しました！")
+            return
+        
+        # リストの先頭から講座IDを取り出す
+        next_lesson_id = self.queue_list.pop(0)
+        self.update_queue_display()
+        
+        print(f"次の講座を開く: L={next_lesson_id}")
+        self.detail_label.config(text=f"残り{len(self.queue_list)}件...")
+        
+        try:
+            # メインウィンドウに切り替える
+            self.driver.switch_to.window(self.main_window)
+            time.sleep(0.5)
+            
+            # マイページに移動
+            print("マイページに移動中...")
+            self.driver.get("https://www.mp-learning.com/Users/MyPage.aspx")
+            time.sleep(3)
+            
+            # 講座リンク要素を探してクリック
+            link_id = f"linkNewLessonPC-{next_lesson_id}"
+            print(f"講座リンクを探しています: {link_id}")
+            
+            try:
+                # まず直接IDで探す
+                link = self.driver.find_element(By.ID, link_id)
+                print(f"リンク発見: {link_id}")
+                
+                # スクロールして表示
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", link)
+                time.sleep(0.5)
+                
+                # クリック
+                link.click()
+                print("講座リンクをクリックしました")
+                
+            except Exception as e:
+                print(f"ID検索失敗: {e}")
+                # XPathで探す
+                try:
+                    link = self.driver.find_element(By.XPATH, f"//a[contains(@id, '{next_lesson_id}')]")
+                    self.driver.execute_script("arguments[0].scrollIntoView(true);", link)
+                    time.sleep(0.5)
+                    link.click()
+                    print("XPathで講座リンクをクリックしました")
+                except Exception as e2:
+                    print(f"XPath検索も失敗: {e2}")
+                    # 最終手段: JavaScriptで直接クリック
+                    self.driver.execute_script(f"""
+                        var link = document.getElementById('{link_id}');
+                        if (link) {{ link.click(); }}
+                    """)
+                    print("JavaScriptで講座リンクをクリックしました")
+            
+            # ポップアップウィンドウを探して監視開始
+            time.sleep(4)
+            self.popup_window = self.find_popup_window()
+            print(f"ポップアップ検出: {self.popup_window}")
+            
+            if self.popup_window:
+                self.driver.switch_to.window(self.popup_window)
+                if not self.monitoring:
+                    self.start_monitoring()
+                # 監視開始後も明示的に再生ボタンをクリック
+                time.sleep(3)
+                print("連続受講: 再生開始を試みます")
+                self.click_play_button()
+            else:
+                print("ポップアップが見つかりませんでした")
+        except Exception as e:
+            print(f"講座オープンエラー: {e}")
+
     
     def click_play_button(self):
         """再生ボタンをクリック（EQプレイヤーのJavaScript APIを使用）"""
@@ -256,6 +514,21 @@ class MPLearningAutoTool:
             try:
                 # ポップアップウィンドウがまだ存在するか確認
                 if self.popup_window not in self.driver.window_handles:
+                    # 連続受講モードなら次の講座を開く
+                    if self.continuous_mode and len(self.queue_list) > 0:
+                        print("ポップアップ閉じ検出 - 次の講座を開く")
+                        self.root.after(1000, self.open_next_queue)
+                        time.sleep(3)
+                        continue
+                    elif self.continuous_mode and len(self.queue_list) == 0:
+                        # 全講座完了
+                        self.continuous_mode = False
+                        self.root.after(0, lambda: self.status_label.config(text="全講座完了！", fg='#F39C12'))
+                        self.root.after(0, lambda: self.detail_label.config(text="予約した講座を全て受講しました"))
+                        print("全講座完了！")
+                        time.sleep(2)
+                        continue
+                    
                     # ポップアップが閉じられた → 新しいポップアップを探す
                     self.popup_window = self.find_popup_window()
                     if self.popup_window is None:
