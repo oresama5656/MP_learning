@@ -246,7 +246,7 @@ class MPLearningAutoTool:
                     title = self.driver.title
                     url = self.driver.current_url
                     # タイトルまたはURLで判定
-                    if "レッスン" in title or "Lesson" in title or "LessonStudy" in url:
+                    if "レッスン" in title or "Lesson" in title or "LessonStudy" in url or "確認テスト" in title or "アンケート" in title:
                         return handle
             return None
         except:
