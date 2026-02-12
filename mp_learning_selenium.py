@@ -38,6 +38,21 @@ class MPLearningAutoTool:
         self.root.attributes("-topmost", True)
         self.root.configure(bg='#2C3E50')
         
+        # アイコン設定（タスクバー・ウィンドウ）
+        try:
+            import sys, os
+            if getattr(sys, 'frozen', False):
+                # exe化された場合: exeと同じディレクトリのicon.icoを使用
+                base_path = os.path.dirname(sys.executable)
+            else:
+                # 開発時: スクリプトのディレクトリ
+                base_path = os.path.dirname(os.path.abspath(__file__))
+            icon_path = os.path.join(base_path, "icon.ico")
+            if os.path.exists(icon_path):
+                self.root.iconbitmap(icon_path)
+        except Exception:
+            pass  # アイコンが見つからなくても動作に支障なし
+        
         # ステータスラベル
         self.status_label = tk.Label(
             self.root, 
