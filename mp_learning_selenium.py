@@ -385,43 +385,56 @@ class MPLearningAutoTool:
             
             # マイページに移動
             print("マイページに移動中...")
-            self.driver.get("https://www.mp-learning.com/Users/MyPage.aspx")
+            self.driver.get("https://www.mp-learning.com/Members/MyPage.aspx")
             time.sleep(3)
             
             # 講座リンク要素を探してクリック
             link_id = f"linkNewLessonPC-{next_lesson_id}"
             print(f"講座リンクを探しています: {link_id}")
             
+            link_clicked = False
+            
+            # 方法1: 直接IDで要素を探してクリック
             try:
-                # まず直接IDで探す
                 link = self.driver.find_element(By.ID, link_id)
                 print(f"リンク発見: {link_id}")
-                
-                # スクロールして表示
                 self.driver.execute_script("arguments[0].scrollIntoView(true);", link)
                 time.sleep(0.5)
-                
-                # クリック
                 link.click()
                 print("講座リンクをクリックしました")
-                
+                link_clicked = True
             except Exception as e:
                 print(f"ID検索失敗: {e}")
-                # XPathで探す
+            
+            # 方法2: XPathで探す
+            if not link_clicked:
                 try:
                     link = self.driver.find_element(By.XPATH, f"//a[contains(@id, '{next_lesson_id}')]")
                     self.driver.execute_script("arguments[0].scrollIntoView(true);", link)
                     time.sleep(0.5)
                     link.click()
                     print("XPathで講座リンクをクリックしました")
+                    link_clicked = True
                 except Exception as e2:
                     print(f"XPath検索も失敗: {e2}")
-                    # 最終手段: JavaScriptで直接クリック
-                    self.driver.execute_script(f"""
-                        var link = document.getElementById('{link_id}');
-                        if (link) {{ link.click(); }}
-                    """)
-                    print("JavaScriptで講座リンクをクリックしました")
+            
+            # 方法3: lnkNewLesson_OnClick をJS直接呼び出し（新着以外の講座用）
+            if not link_clicked:
+                print("方法3: lnkNewLesson_OnClick を直接呼び出します")
+                for lesson_type in [2, 3]:
+                    try:
+                        result = self.driver.execute_script(f"""
+                            lnkNewLesson_OnClick("{next_lesson_id}", {lesson_type}, 1, "linkNewLessonPC-{next_lesson_id}", 0);
+                            return 'called_type_{lesson_type}';
+                        """)
+                        print(f"lnkNewLesson_OnClick (type={lesson_type}): {result}")
+                        link_clicked = True
+                        break
+                    except Exception as e3:
+                        print(f"type={lesson_type} 失敗: {e3}")
+            
+            if not link_clicked:
+                print(f"全ての方法で講座 {next_lesson_id} のオープンに失敗しました")
             
             # ポップアップウィンドウを探して監視開始
             time.sleep(4)

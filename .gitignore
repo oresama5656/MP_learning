@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 実行ファイル
+*.exe
+*.exe_extracted/
+
+# HTMLダンプ（デバッグ用）
+dump_*.html
+debug_page.html
+
+# テスト・調査用スクリプト
+test_*.py
+inspect_*.py
+
+# 画像認識版の旧ファイル
+click.png
+to_test.png
+touan.png
+
+# 認証情報（※注意：既にコミット済みの場合は別途対応必要）
+IDとパスワード一覧.txt
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
