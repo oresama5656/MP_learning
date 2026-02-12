@@ -7,6 +7,11 @@ __pycache__/
 *.exe
 *.exe_extracted/
 
+# PyInstaller
+build/
+dist/
+*.spec
+
 # HTMLダンプ（デバッグ用）
 dump_*.html
 debug_page.html
