@@ -42,12 +42,13 @@ class MPLearningAutoTool:
         try:
             import sys, os
             if getattr(sys, 'frozen', False):
-                # exe化された場合: exeと同じディレクトリのicon.icoを使用
-                base_path = os.path.dirname(sys.executable)
+                # exe化された場合: _MEIPASS（バンドルデータ）→ exeディレクトリの順に探す
+                icon_path = os.path.join(getattr(sys, '_MEIPASS', ''), "icon.ico")
+                if not os.path.exists(icon_path):
+                    icon_path = os.path.join(os.path.dirname(sys.executable), "icon.ico")
             else:
                 # 開発時: スクリプトのディレクトリ
-                base_path = os.path.dirname(os.path.abspath(__file__))
-            icon_path = os.path.join(base_path, "icon.ico")
+                icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.ico")
             if os.path.exists(icon_path):
                 self.root.iconbitmap(icon_path)
         except Exception:
@@ -626,11 +627,11 @@ class MPLearningAutoTool:
                                     radioGroups[name].push(radio);
                                 });
                                 
-                                // 各グループの最初のラジオボタンを選択
+                                // 各グループの最初のラジオボタンをクリックで選択
                                 var count = 0;
                                 for (var name in radioGroups) {
                                     if (radioGroups[name].length > 0) {
-                                        radioGroups[name][0].checked = true;
+                                        radioGroups[name][0].click();
                                         count++;
                                     }
                                 }
