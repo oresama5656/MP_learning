@@ -30,6 +30,7 @@ class MPLearningAutoTool:
         self.popup_window = None  # ポップアップウィンドウのハンドル
         self.queue_list = []  # 予約リスト
         self.continuous_mode = False  # 連続受講モード
+        self.opening_next = False  # 次の講座を開く処理中フラグ（二重発火防止）
         
         # GUI作成
         self.root = tk.Tk()
@@ -393,6 +394,13 @@ class MPLearningAutoTool:
     
     def open_next_queue(self):
         """予約リストの次の講座を開く"""
+        try:
+            self._open_next_queue_impl()
+        finally:
+            self.opening_next = False  # 処理完了後にフラグを解除
+    
+    def _open_next_queue_impl(self):
+        """open_next_queueの実装（finallyでフラグ解除するためのラッパー）"""
         if len(self.queue_list) == 0:
             self.continuous_mode = False
             self.status_label.config(text="全講座完了！", fg='#F39C12')
@@ -556,11 +564,17 @@ class MPLearningAutoTool:
             try:
                 # ポップアップウィンドウがまだ存在するか確認
                 if self.popup_window not in self.driver.window_handles:
-                    # 連続受講モードなら次の講座を開く
+                    # 連続受講モードなら次の講座を開く（二重発火防止）
                     if self.continuous_mode and len(self.queue_list) > 0:
+                        if self.opening_next:
+                            # open_next_queueが実行中なので待機
+                            print("次の講座を開く処理中... 待機します")
+                            time.sleep(3)
+                            continue
                         print("ポップアップ閉じ検出 - 次の講座を開く")
+                        self.opening_next = True
                         self.root.after(1000, self.open_next_queue)
-                        time.sleep(3)
+                        time.sleep(5)
                         continue
                     elif self.continuous_mode and len(self.queue_list) == 0:
                         # 全講座完了
