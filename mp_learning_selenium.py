@@ -38,6 +38,14 @@ class MPLearningAutoTool:
         self.root.attributes("-topmost", True)
         self.root.configure(bg='#2C3E50')
         
+        # Windowsのタスクバーアイコン表示の修正 (AppUserModelID)
+        try:
+            import ctypes
+            myappid = 'oresama5656.mp_learning.auto_tool.v3' # 任意のユニークなID
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        except Exception:
+            pass
+
         # アイコン設定（タスクバー・ウィンドウ）
         try:
             import sys, os
@@ -49,8 +57,13 @@ class MPLearningAutoTool:
             else:
                 # 開発時: スクリプトのディレクトリ
                 icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.ico")
+            
             if os.path.exists(icon_path):
                 self.root.iconbitmap(icon_path)
+            elif getattr(sys, 'frozen', False):
+                # exeの場合、内蔵アイコンを強制的に使う（もし外部にない場合）
+                # PyInstallerのビルド時に指定したアイコンがデフォルト
+                pass
         except Exception:
             pass  # アイコンが見つからなくても動作に支障なし
         
@@ -614,7 +627,8 @@ class MPLearningAutoTool:
                             self.update_detail("テスト回答中...")
                             print("テスト回答画面検出 - 自動回答開始")
                             
-                            # JavaScriptで各問の最初のラジオボタンを選択
+                            # JavaScriptでラジオボタン選択 + 答案提出を一括実行
+                            # checked=trueでポストバックを防ぎ、即座にsubmitクリック
                             result = self.driver.execute_script("""
                                 // 全てのラジオボタングループを取得
                                 var radioGroups = {};
@@ -627,23 +641,24 @@ class MPLearningAutoTool:
                                     radioGroups[name].push(radio);
                                 });
                                 
-                                // 各グループの最初のラジオボタンをクリックで選択
+                                // 各グループの最初のラジオボタンを選択（checked=trueでポストバック回避）
                                 var count = 0;
                                 for (var name in radioGroups) {
                                     if (radioGroups[name].length > 0) {
-                                        radioGroups[name][0].click();
+                                        radioGroups[name][0].checked = true;
                                         count++;
                                     }
                                 }
-                                return count + '問回答';
+                                
+                                // 答案提出ボタンをクリック
+                                var submitBtn = document.getElementById('ctl00_examBody_lnkExamAnswerSubmit');
+                                if (submitBtn) {
+                                    submitBtn.click();
+                                    return count + '問回答 + 答案提出';
+                                }
+                                return count + '問回答（提出ボタン見つからず）';
                             """)
-                            print(f"選択肢選択完了: {result}")
-                            time.sleep(1)
-                            
-                            # 答案提出
-                            submit_btn = self.driver.find_element(By.ID, "ctl00_examBody_lnkExamAnswerSubmit")
-                            submit_btn.click()
-                            print("答案提出完了")
+                            print(f"テスト処理結果: {result}")
                             self.update_detail("答案提出完了")
                             time.sleep(3)
                             continue
