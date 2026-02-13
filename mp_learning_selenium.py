@@ -592,10 +592,15 @@ class MPLearningAutoTool:
                         time.sleep(2)
                         continue
                 
-                # ポップアップウィンドウに切り替え（1回だけ）
+                # ポップアップウィンドウに切り替え（最前面化抑制）
                 current = self.driver.current_window_handle
                 if current != self.popup_window:
                     self.driver.switch_to.window(self.popup_window)
+                    # ウィンドウが最前面に来るのを抑制（フォーカスを外す）
+                    try:
+                        self.driver.execute_script("window.blur();")
+                    except:
+                        pass
                 
                 # 「次の学習へ」「テストへ」ボタンを探す
                 try:
@@ -606,8 +611,8 @@ class MPLearningAutoTool:
                         self.update_detail(f"検出: {link_text}")
                         print(f"ボタン検出: {link_text}")
                         
-                        # クリック
-                        btn.click()
+                        # JSクリック（ウィンドウ最前面化を抑制）
+                        self.driver.execute_script("arguments[0].click();", btn)
                         print(f"クリック完了: {link_text}")
                         self.update_detail(f"クリック: {link_text}")
                         
@@ -685,7 +690,7 @@ class MPLearningAutoTool:
                     if next_btn.is_displayed():
                         self.update_detail("解説画面 - 次へ")
                         print("解説画面検出 - 次へクリック")
-                        next_btn.click()
+                        self.driver.execute_script("arguments[0].click();", next_btn)
                         time.sleep(3)
                         continue
                 except:
@@ -699,7 +704,7 @@ class MPLearningAutoTool:
                         if end_label.is_displayed():
                             self.update_detail("アンケート画面 - 終了")
                             print("アンケート画面検出 - 終了クリック")
-                            end_label.click()
+                            self.driver.execute_script("arguments[0].click();", end_label)
                             time.sleep(2)
                             continue
                 except:
